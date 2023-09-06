@@ -1,0 +1,599 @@
+/*
+ * Created by JFormDesigner on Sat Sep 02 16:56:14 CST 2023
+ */
+
+package versionControlTool;
+
+import javax.swing.border.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.io.File;
+
+//import org.dom4j.Document;
+
+
+/**
+ * @author Brainrain
+ */
+public class MyJframe extends JFrame {
+    public MyJframe() {
+        initComponents();
+    }
+
+    private void button1(ActionEvent e) {
+        //获取信息
+        String repositoryValue;
+        String branchValue;
+
+
+        String text = textArea1.getText();
+        String text1 = text + "\\package_define.xml";
+        File file = new File(text1);
+
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = null;
+
+
+        try {
+            db = dbf.newDocumentBuilder();
+        } catch (ParserConfigurationException a) {
+            // TODO Auto-generated catch block
+            System.out.println("无法获取该 对象");
+        }
+
+
+        //加载xml文件
+        try {
+            Document document = db.parse(text1);
+            NodeList nodelist = document.getElementsByTagName("package_res");
+
+
+            for (int i = 0; i < nodelist.getLength(); i++) {
+                System.out.println(i);
+//                System.out.println(nodelist.getLength());
+
+                Node node = nodelist.item(i);
+                String nodeName = node.getNodeName();
+//                System.out.println(nodeName);
+                String textContent = node.getTextContent();
+                String trim = textContent.trim();
+//                System.out.println(trim);
+                String[] split = trim.split("\n");
+//                System.out.println(Arrays.toString(split));
+                String trim1 = split[0].trim();
+                String trim2 = split[1].trim();
+
+                textField1.setText(trim1);
+                textField2.setText(trim2);
+
+            }
+
+
+        } catch (Exception c) {
+            // TODO Auto-generated catch block
+            c.printStackTrace();
+        }
+    }
+
+    private void button2(ActionEvent e) {
+        // TODO add your code here
+        StringSelection stringSelection = new StringSelection(textField1.getText());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+
+    }
+
+    private void button3(ActionEvent e) {
+        // TODO add your code here
+        StringSelection stringSelection = new StringSelection(textField2.getText());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+    }
+
+    private void button4(ActionEvent e) {
+        // TODO add your code here
+        //git add .
+        StringSelection stringSelection = new StringSelection(textArea3.getText());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+
+    }
+
+    private void button5(ActionEvent e) {
+        // TODO add your code here
+        //git commit
+        StringSelection stringSelection = new StringSelection(textArea2.getText());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+    }
+
+    private void button7(ActionEvent e) {
+        // TODO add your code here
+        String gitclone = "git push origin " + textField2.getText() + ":refs/for/" + textField2.getText();
+        StringSelection stringSelection = new StringSelection(gitclone);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+
+    }
+
+    private void button6(ActionEvent e) {
+        // TODO add your code here
+        String gitclone = "git clone " + textField1.getText() + " -b " + textField2.getText();
+        StringSelection stringSelection = new StringSelection(gitclone);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+    }
+
+    private void button9(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void button10(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void button8(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void button11(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void button12(ActionEvent e) {
+        // TODO add your code here
+    }
+
+
+//        SAXReader saxReader = new SAXReader();
+//        try {
+//            Document doc = saxReader.read(file);
+//            Element rootElement = doc.getRootElement();
+//
+//            doc.get
+//        } catch (DocumentException e1) {
+//            e1.printStackTrace();
+//        }
+
+
+    private void initComponents() {
+        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        frame1 = new JFrame();
+        panel1 = new JPanel();
+        scrollPane1 = new JScrollPane();
+        textArea1 = new JTextArea();
+        button1 = new JButton();
+        label3 = new JLabel();
+        button4 = new JButton();
+        textArea3 = new JTextArea();
+        button5 = new JButton();
+        panel2 = new JPanel();
+        label4 = new JLabel();
+        label1 = new JLabel();
+        textField1 = new JTextField();
+        label2 = new JLabel();
+        textField2 = new JTextField();
+        button2 = new JButton();
+        button3 = new JButton();
+        button7 = new JButton();
+        button6 = new JButton();
+        label6 = new JLabel();
+        textField3 = new JTextField();
+        button8 = new JButton();
+        textArea2 = new JTextArea();
+        panel3 = new JPanel();
+        textField4 = new JTextField();
+        textArea4 = new JTextArea();
+        textField5 = new JTextField();
+        label8 = new JLabel();
+        label7 = new JLabel();
+        label5 = new JLabel();
+        label9 = new JLabel();
+        button9 = new JButton();
+        button10 = new JButton();
+        button11 = new JButton();
+        button12 = new JButton();
+
+        //======== frame1 ========
+        {
+            frame1.setForeground(Color.black);
+            frame1.setBackground(new Color(200, 221, 212));
+            frame1.setTitle("\u7248\u672c\u7ba1\u63a7");
+            frame1.setVisible(true);
+            Container frame1ContentPane = frame1.getContentPane();
+            frame1ContentPane.setLayout(null);
+
+            //======== panel1 ========
+            {
+                panel1.setBackground(Color.white);
+                panel1.setLayout(null);
+
+                //======== scrollPane1 ========
+                {
+
+                    //---- textArea1 ----
+                    textArea1.setForeground(Color.black);
+                    textArea1.setBackground(Color.white);
+                    textArea1.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
+                    textArea1.setLineWrap(true);
+                    textArea1.setMargin(new Insets(10, 10, 10, 10));
+                    scrollPane1.setViewportView(textArea1);
+                }
+                panel1.add(scrollPane1);
+                scrollPane1.setBounds(40, 55, 335, 60);
+
+                //---- button1 ----
+                button1.setText("\u83b7\u53d6");
+                button1.setForeground(Color.black);
+                button1.setBackground(new Color(200, 221, 212));
+                button1.addActionListener(e -> button1(e));
+                panel1.add(button1);
+                button1.setBounds(new Rectangle(new Point(410, 75), button1.getPreferredSize()));
+
+                //---- label3 ----
+                label3.setText("\u8f93\u5165base\u5305CMC\u7248\u672c\u53f7");
+                label3.setBackground(Color.white);
+                label3.setForeground(new Color(169, 0, 0));
+                label3.setFont(new Font("Microsoft YaHei UI", Font.BOLD, 18));
+                panel1.add(label3);
+                label3.setBounds(40, 15, 365, 24);
+
+                //---- button4 ----
+                button4.setText("\u590d\u5236");
+                button4.setForeground(Color.black);
+                button4.setBackground(new Color(200, 221, 212));
+                button4.addActionListener(e -> button4(e));
+                panel1.add(button4);
+                button4.setBounds(855, 100, 102, 33);
+
+                //---- textArea3 ----
+                textArea3.setForeground(Color.black);
+                textArea3.setBackground(new Color(249, 249, 249, 249));
+                textArea3.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
+                textArea3.setLineWrap(true);
+                textArea3.setMargin(new Insets(10, 10, 10, 10));
+                textArea3.setText("git add .");
+                panel1.add(textArea3);
+                textArea3.setBounds(700, 85, 120, 55);
+
+                //---- button5 ----
+                button5.setText("\u590d\u5236");
+                button5.setForeground(Color.black);
+                button5.setBackground(new Color(200, 221, 212));
+                button5.addActionListener(e -> button5(e));
+                panel1.add(button5);
+                button5.setBounds(1300, 100, 102, 33);
+
+                //======== panel2 ========
+                {
+                    panel2.setBackground(new Color(248, 248, 248));
+                    panel2.setBorder(null);
+                    panel2.setLayout(null);
+
+                    //---- label4 ----
+                    label4.setText("\u7248\u672c\u7ba1\u63a7");
+                    label4.setBackground(Color.white);
+                    label4.setForeground(Color.red);
+                    label4.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    panel2.add(label4);
+                    label4.setBounds(20, 10, 90, 40);
+
+                    //---- label1 ----
+                    label1.setText("\u4ed3");
+                    label1.setBackground(Color.white);
+                    label1.setForeground(Color.black);
+                    label1.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    panel2.add(label1);
+                    label1.setBounds(new Rectangle(new Point(45, 90), label1.getPreferredSize()));
+
+                    //---- textField1 ----
+                    textField1.setBackground(Color.white);
+                    textField1.setForeground(Color.black);
+                    textField1.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    textField1.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+                    textField1.setToolTipText("d");
+                    textField1.setMargin(new Insets(10, 10, 10, 10));
+                    panel2.add(textField1);
+                    textField1.setBounds(100, 65, 855, 70);
+
+                    //---- label2 ----
+                    label2.setText("\u5206\u652f");
+                    label2.setBackground(Color.white);
+                    label2.setForeground(Color.black);
+                    label2.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    panel2.add(label2);
+                    label2.setBounds(35, 165, 50, 40);
+
+                    //---- textField2 ----
+                    textField2.setBackground(Color.white);
+                    textField2.setForeground(Color.black);
+                    textField2.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    textField2.setMargin(new Insets(10, 10, 10, 10));
+                    panel2.add(textField2);
+                    textField2.setBounds(100, 165, 855, 40);
+
+                    //---- button2 ----
+                    button2.setText("\u590d\u5236\u4ed3");
+                    button2.setForeground(Color.black);
+                    button2.setBackground(new Color(200, 221, 212));
+                    button2.addActionListener(e -> button2(e));
+                    panel2.add(button2);
+                    button2.setBounds(1005, 90, 102, button2.getPreferredSize().height);
+
+                    //---- button3 ----
+                    button3.setText("\u590d\u5236\u5206\u652f");
+                    button3.setForeground(Color.black);
+                    button3.setBackground(new Color(200, 221, 212));
+                    button3.addActionListener(e -> button3(e));
+                    panel2.add(button3);
+                    button3.setBounds(1005, 170, 102, 33);
+
+                    //---- button7 ----
+                    button7.setText("\u590d\u5236push\u547d\u4ee4");
+                    button7.setForeground(Color.black);
+                    button7.setBackground(new Color(200, 221, 212));
+                    button7.addActionListener(e -> button7(e));
+                    panel2.add(button7);
+                    button7.setBounds(275, 320, 125, 33);
+
+                    //---- button6 ----
+                    button6.setText("\u590d\u5236clone\u547d\u4ee4");
+                    button6.setForeground(Color.black);
+                    button6.setBackground(new Color(200, 221, 212));
+                    button6.addActionListener(e -> button6(e));
+                    panel2.add(button6);
+                    button6.setBounds(95, 320, 130, 33);
+
+                    //---- label6 ----
+                    label6.setText("tag");
+                    label6.setBackground(Color.white);
+                    label6.setForeground(Color.black);
+                    label6.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    panel2.add(label6);
+                    label6.setBounds(40, 240, 50, 40);
+
+                    //---- textField3 ----
+                    textField3.setBackground(Color.white);
+                    textField3.setForeground(Color.black);
+                    textField3.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    textField3.setMargin(new Insets(10, 10, 10, 10));
+                    panel2.add(textField3);
+                    textField3.setBounds(100, 240, 855, 40);
+
+                    //---- button8 ----
+                    button8.setText("\u590d\u5236tag");
+                    button8.setForeground(Color.black);
+                    button8.setBackground(new Color(200, 221, 212));
+                    button8.addActionListener(e -> button8(e));
+                    panel2.add(button8);
+                    button8.setBounds(1010, 245, 102, 33);
+
+                    {
+                        // compute preferred size
+                        Dimension preferredSize = new Dimension();
+                        for(int i = 0; i < panel2.getComponentCount(); i++) {
+                            Rectangle bounds = panel2.getComponent(i).getBounds();
+                            preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+                            preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+                        }
+                        Insets insets = panel2.getInsets();
+                        preferredSize.width += insets.right;
+                        preferredSize.height += insets.bottom;
+                        panel2.setMinimumSize(preferredSize);
+                        panel2.setPreferredSize(preferredSize);
+                    }
+                }
+                panel1.add(panel2);
+                panel2.setBounds(45, 590, 1275, 360);
+
+                //---- textArea2 ----
+                textArea2.setForeground(Color.black);
+                textArea2.setBackground(new Color(249, 249, 249, 249));
+                textArea2.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
+                textArea2.setLineWrap(true);
+                textArea2.setMargin(new Insets(10, 10, 10, 10));
+                textArea2.setText("git commit -m \"\nTickeNo:DTS2015562722607\nDhdhhdjsisj:modijy version No.\nTeam:hskss\nFeature\nBin\nPri");
+                panel1.add(textArea2);
+                textArea2.setBounds(1015, 0, 265, 235);
+
+                //======== panel3 ========
+                {
+                    panel3.setBackground(new Color(248, 248, 248));
+                    panel3.setBorder(null);
+                    panel3.setLayout(null);
+
+                    //---- textField4 ----
+                    textField4.setBackground(Color.white);
+                    textField4.setForeground(Color.black);
+                    textField4.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    textField4.setMargin(new Insets(10, 10, 10, 10));
+                    panel3.add(textField4);
+                    textField4.setBounds(95, 155, 855, 40);
+
+                    //---- textArea4 ----
+                    textArea4.setForeground(Color.black);
+                    textArea4.setBackground(Color.white);
+                    textArea4.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
+                    textArea4.setLineWrap(true);
+                    textArea4.setMargin(new Insets(10, 10, 10, 10));
+                    textArea4.setBorder(LineBorder.createBlackLineBorder());
+                    panel3.add(textArea4);
+                    textArea4.setBounds(95, 85, 420, 58);
+
+                    //---- textField5 ----
+                    textField5.setBackground(Color.white);
+                    textField5.setForeground(Color.black);
+                    textField5.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    textField5.setMargin(new Insets(10, 10, 10, 10));
+                    panel3.add(textField5);
+                    textField5.setBounds(95, 215, 855, 40);
+
+                    //---- label8 ----
+                    label8.setText("\u5206\u652f");
+                    label8.setBackground(Color.white);
+                    label8.setForeground(Color.black);
+                    label8.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    panel3.add(label8);
+                    label8.setBounds(30, 215, 50, 40);
+
+                    //---- label7 ----
+                    label7.setText("\u4ed3");
+                    label7.setBackground(Color.white);
+                    label7.setForeground(Color.black);
+                    label7.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    panel3.add(label7);
+                    label7.setBounds(35, 160, 35, 24);
+
+                    //---- label5 ----
+                    label5.setText("Package_Name");
+                    label5.setBackground(Color.white);
+                    label5.setForeground(Color.black);
+                    label5.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    panel3.add(label5);
+                    label5.setBounds(10, 50, 135, 24);
+
+                    //---- label9 ----
+                    label9.setText("\u5de5\u7a0b\u914d\u7f6e\u4ed3");
+                    label9.setBackground(Color.white);
+                    label9.setForeground(Color.red);
+                    label9.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+                    panel3.add(label9);
+                    label9.setBounds(10, 10, 100, 40);
+
+                    //---- button9 ----
+                    button9.setText("\u590d\u5236\u4ed3");
+                    button9.setForeground(Color.black);
+                    button9.setBackground(new Color(200, 221, 212));
+                    button9.addActionListener(e -> button9(e));
+                    panel3.add(button9);
+                    button9.setBounds(1005, 160, 102, 33);
+
+                    //---- button10 ----
+                    button10.setText("\u590d\u5236\u5206\u652f");
+                    button10.setForeground(Color.black);
+                    button10.setBackground(new Color(200, 221, 212));
+                    button10.addActionListener(e -> button10(e));
+                    panel3.add(button10);
+                    button10.setBounds(1005, 220, 102, 33);
+
+                    //---- button11 ----
+                    button11.setText("\u590d\u5236");
+                    button11.setForeground(Color.black);
+                    button11.setBackground(new Color(200, 221, 212));
+                    button11.addActionListener(e -> button11(e));
+                    panel3.add(button11);
+                    button11.setBounds(540, 100, 102, 33);
+
+                    //---- button12 ----
+                    button12.setText("\u590d\u5236clone\u547d\u4ee4");
+                    button12.setForeground(Color.black);
+                    button12.setBackground(new Color(200, 221, 212));
+                    button12.addActionListener(e -> button12(e));
+                    panel3.add(button12);
+                    button12.setBounds(100, 280, 130, 33);
+
+                    {
+                        // compute preferred size
+                        Dimension preferredSize = new Dimension();
+                        for(int i = 0; i < panel3.getComponentCount(); i++) {
+                            Rectangle bounds = panel3.getComponent(i).getBounds();
+                            preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+                            preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+                        }
+                        Insets insets = panel3.getInsets();
+                        preferredSize.width += insets.right;
+                        preferredSize.height += insets.bottom;
+                        panel3.setMinimumSize(preferredSize);
+                        panel3.setPreferredSize(preferredSize);
+                    }
+                }
+                panel1.add(panel3);
+                panel3.setBounds(45, 240, 1160, 325);
+
+                {
+                    // compute preferred size
+                    Dimension preferredSize = new Dimension();
+                    for(int i = 0; i < panel1.getComponentCount(); i++) {
+                        Rectangle bounds = panel1.getComponent(i).getBounds();
+                        preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+                        preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+                    }
+                    Insets insets = panel1.getInsets();
+                    preferredSize.width += insets.right;
+                    preferredSize.height += insets.bottom;
+                    panel1.setMinimumSize(preferredSize);
+                    panel1.setPreferredSize(preferredSize);
+                }
+            }
+            frame1ContentPane.add(panel1);
+            panel1.setBounds(0, 0, 1425, 970);
+
+            {
+                // compute preferred size
+                Dimension preferredSize = new Dimension();
+                for(int i = 0; i < frame1ContentPane.getComponentCount(); i++) {
+                    Rectangle bounds = frame1ContentPane.getComponent(i).getBounds();
+                    preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+                    preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+                }
+                Insets insets = frame1ContentPane.getInsets();
+                preferredSize.width += insets.right;
+                preferredSize.height += insets.bottom;
+                frame1ContentPane.setMinimumSize(preferredSize);
+                frame1ContentPane.setPreferredSize(preferredSize);
+            }
+            frame1.pack();
+            frame1.setLocationRelativeTo(frame1.getOwner());
+        }
+        // JFormDesigner - End of component initialization  //GEN-END:initComponents
+    }
+
+    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    private JFrame frame1;
+    private JPanel panel1;
+    private JScrollPane scrollPane1;
+    private JTextArea textArea1;
+    private JButton button1;
+    private JLabel label3;
+    private JButton button4;
+    private JTextArea textArea3;
+    private JButton button5;
+    private JPanel panel2;
+    private JLabel label4;
+    private JLabel label1;
+    private JTextField textField1;
+    private JLabel label2;
+    private JTextField textField2;
+    private JButton button2;
+    private JButton button3;
+    private JButton button7;
+    private JButton button6;
+    private JLabel label6;
+    private JTextField textField3;
+    private JButton button8;
+    private JTextArea textArea2;
+    private JPanel panel3;
+    private JTextField textField4;
+    private JTextArea textArea4;
+    private JTextField textField5;
+    private JLabel label8;
+    private JLabel label7;
+    private JLabel label5;
+    private JLabel label9;
+    private JButton button9;
+    private JButton button10;
+    private JButton button11;
+    private JButton button12;
+    // JFormDesigner - End of variables declaration  //GEN-END:variables
+}
