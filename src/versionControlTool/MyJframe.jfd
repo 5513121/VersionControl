@@ -1,0 +1,212 @@
+JFDML JFormDesigner: "7.0.7.1.1184" Java: "1.8.0_152-release" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) ) {
+			name: "frame1"
+			"foreground": sfield java.awt.Color black
+			"background": new java.awt.Color( 200, 221, 212, 255 )
+			"title": "版本管控"
+			"visible": true
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) ) {
+				name: "panel1"
+				"background": new java.awt.Color( 255, 255, 255, 255 )
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "scrollPane1"
+					add( new FormComponent( "javax.swing.JTextArea" ) {
+						name: "textArea1"
+						"foreground": &Color0 new java.awt.Color( 0, 0, 0, 255 )
+						"background": new java.awt.Color( 255, 255, 255, 255 )
+						"font": &Font0 new java.awt.Font( "Monospaced", 0, 18 )
+						"lineWrap": true
+						"margin": &Insets0 new java.awt.Insets( 10, 10, 10, 10 )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"x": 45
+					"y": 395
+					"width": 855
+					"height": 60
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button1"
+					"text": "获取版本管控"
+					"foreground": &Color1 new java.awt.Color( 0, 0, 0, 255 )
+					"background": new java.awt.Color( 200, 221, 212, 255 )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button1", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"x": 925
+					"y": 410
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "textField1"
+					"background": &Color2 new java.awt.Color( 255, 255, 255, 255 )
+					"foreground": &Color3 new java.awt.Color( 0, 0, 0, 255 )
+					"font": new java.awt.Font( "Microsoft YaHei UI", 0, 18 )
+					"cursor": new java.awt.Cursor( 2 )
+					"toolTipText": "d"
+					"margin": new java.awt.Insets( 10, 10, 10, 10 )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"x": 45
+					"y": 480
+					"width": 855
+					"height": 70
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label1"
+					"text": "仓"
+					"background": &Color4 new java.awt.Color( 255, 255, 255, 255 )
+					"foreground": &Color5 new java.awt.Color( 0, 0, 0, 255 )
+					"font": &Font1 new java.awt.Font( "Microsoft YaHei UI", 0, 18 )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"x": 10
+					"y": 505
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label2"
+					"text": "分支"
+					"background": #Color4
+					"foreground": #Color5
+					"font": #Font1
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 45
+					"height": 40
+					"x": 5
+					"y": 575
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "textField2"
+					"background": #Color2
+					"foreground": #Color3
+					"font": new java.awt.Font( "Microsoft YaHei UI", 0, 18 )
+					"margin": new java.awt.Insets( 10, 10, 10, 10 )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 855
+					"height": 40
+					"x": 45
+					"y": 575
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label3"
+					"text": "输入package_define.xml路径"
+					"background": #Color4
+					"foreground": #Color5
+					"font": #Font1
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 365
+					"height": 24
+					"x": 45
+					"y": 360
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button2"
+					"text": "复制仓"
+					"foreground": #Color1
+					"background": new java.awt.Color( 200, 221, 212, 255 )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button2", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 102
+					"height": 33
+					"x": 925
+					"y": 505
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button3"
+					"text": "复制分支"
+					"foreground": #Color1
+					"background": new java.awt.Color( 200, 221, 212, 255 )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button3", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 102
+					"height": 33
+					"x": 925
+					"y": 575
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button4"
+					"text": "复制"
+					"foreground": #Color1
+					"background": &Color6 new java.awt.Color( 200, 221, 212, 255 )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button4", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 102
+					"height": 33
+					"x": 150
+					"y": 30
+				} )
+				add( new FormComponent( "javax.swing.JTextArea" ) {
+					name: "textArea2"
+					"foreground": #Color0
+					"background": &Color7 new java.awt.Color( 249, 249, 249, 249 )
+					"font": #Font0
+					"lineWrap": true
+					"margin": #Insets0
+					"text": "git commit -m \"\nTickeNo:DTS2015562722607\nDhdhhdjsisj:modijy version No.\nTeam:hskss\nFeature\nBin\nPri"
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 265
+					"height": 245
+					"x": 10
+					"y": 100
+				} )
+				add( new FormComponent( "javax.swing.JTextArea" ) {
+					name: "textArea3"
+					"foreground": #Color0
+					"background": #Color7
+					"font": #Font0
+					"lineWrap": true
+					"margin": #Insets0
+					"text": "git add ."
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 120
+					"height": 55
+					"x": 10
+					"y": 15
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button5"
+					"text": "复制"
+					"foreground": #Color1
+					"background": #Color6
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button5", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 102
+					"height": 33
+					"x": 285
+					"y": 215
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button6"
+					"text": "复制clone命令"
+					"foreground": #Color1
+					"background": #Color6
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button6", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 130
+					"height": 33
+					"x": 265
+					"y": 660
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button7"
+					"text": "复制push命令"
+					"foreground": #Color1
+					"background": #Color6
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button7", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+					"width": 125
+					"height": 33
+					"x": 50
+					"y": 660
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 0
+				"y": 0
+				"height": 765
+				"width": 1100
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 190, 80 )
+			"size": new java.awt.Dimension( 1100, 795 )
+		} )
+	}
+}

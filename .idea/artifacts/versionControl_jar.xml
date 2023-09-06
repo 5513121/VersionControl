@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="versionControl:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/versionControl_jar</output-path>
+    <root id="archive" name="versionControl.jar">
+      <element id="module-output" name="versionControl" />
+    </root>
+  </artifact>
+</component>
