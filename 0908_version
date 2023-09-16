@@ -6,8 +6,9 @@ package versionControlTool;
 
 import javax.swing.border.*;
 
+import org.dom4j.*;
+import org.dom4j.io.SAXReader;
 import org.omg.SendingContext.RunTime;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -22,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,37 +51,95 @@ public class MyJframe extends JFrame {
 		String text = textArea1.getText();
 	    versionNumber = text.trim() ;
 //	    System.out.println(versionNumber);
-	    String command = "java -jar TRCartget.jar pull "+"\""+ versionNumber+ "\""+" -vp  \"BiddingDoc/config/\" -ap \"D:/cmc_upload_download/\"";
-	
+	    textArea1.setText(versionNumber);   //将去除空格的版本号重新加载到文本域
+	    
+	    
+	  //判断package_define.xml存在      就不下载
+	    File file1 = new File("D:\\cmc_upload_download\\"+versionNumber+"\\BiddingDoc\\config\\base_package_config\\package_define.xml");
+	    
+	    if(!file1.exists()) {
+//		    String path = getClass().getClassLoader().getResource("").getPath();
+//		    System.out.println(path);
+		    String command = "java -jar TRCartget.jar pull "+"\""+ versionNumber+ "\""+" -vp  \"BiddingDoc/config/\" -ap \"D:/cmc_upload_download/\"";
+		
+			try {
+				Process process = Runtime.getRuntime().exec("cmd.exe /c "+ command +" >out.txt");
+
+//				BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+				try {
+					int waitFor = process.waitFor();    //用于阻塞进程  下载完版本后才可进行后续操作
+					// if(waitFor==0|| waitFor==1) {
+//					String readLine = reader.readLine();
+//					while (readLine != null) {
+//						System.out.println(readLine);
+//					}
+					// }
+				} catch (InterruptedException e1) {
+					// TODO 自动生成的 catch 块
+					e1.printStackTrace();
+				}
+
+			} catch (IOException e1) {
+				// TODO 自动生成的 catch 块
+				e1.printStackTrace();
+			}
+			
+	    }
+	    
+
+		
+		
+		
+		
+        //------------------------------------------获取数据------------------------------------------	
+		//获取Package_Name路径
+		String configPath="D:\\cmc_upload_download\\"+versionNumber+"\\BiddingDoc\\config\\base_package_config\\package_define.xml";
+//		System.out.println(configPath);
+		
+		FileInputStream fileInputStream;
 		try {
-			Process process = Runtime.getRuntime().exec("cmd.exe /c "+ command +" >out.txt");
-
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//			try {
-//				int waitFor = process.waitFor();
-//				// if(waitFor==0|| waitFor==1) {
-//				String readLine = reader.readLine();
-//				while (readLine != null) {
-//					System.out.println(readLine);
-//				}
-//				// }
-//			} catch (InterruptedException e1) {
-//				// TODO 自动生成的 catch 块
-//				e1.printStackTrace();
-//			}
-
-		} catch (IOException e1) {
+			fileInputStream = new FileInputStream(configPath);
+		} catch (FileNotFoundException e1) {
+			// TODO 自动生成的 catch 块
+			e1.printStackTrace();
+		}
+		
+		SAXReader saxReader = new SAXReader();
+		try {
+			Document read = saxReader.read(configPath);
+			Element rootElement = read.getRootElement();    //build_desc标签
+//			System.out.println(rootElement.getName());   
+			
+			packageNname = rootElement.attributeValue("package_name");
+			textArea4.setText(packageNname);
+			
+			configRepositoryValue = rootElement.attributeValue("config_repository");
+			configBranchValue=rootElement.attributeValue("config_branch");
+			System.out.println(configRepositoryValue+"\n"+configBranchValue);
+			textField4.setText(configRepositoryValue);
+			textField5.setText(configBranchValue);
+			
+			
+			//版本管控获取
+			String versionControlRepository = rootElement.element("input").element("tools").element("package_res").element("repository").getText();
+			textField1.setText(versionControlRepository);
+			
+			String versionControlBranch = rootElement.element("input").element("tools").element("package_res").element("branch").getText();
+			textField2.setText(versionControlBranch);
+			
+			String versionControlTag = rootElement.element("input").element("tools").element("package_res").element("tag").getText();
+			textField3.setText(versionControlTag);
+			
+	
+			
+			
+		} catch (DocumentException e1) {
 			// TODO 自动生成的 catch 块
 			e1.printStackTrace();
 		}
 		
 		
 		
-		
-		
-        //------------------------------------------获取数据------------------------------------------
-
-//		FileInputStream fileInputStream = new FileInputStream();
 
 	}
 
@@ -269,6 +329,7 @@ public class MyJframe extends JFrame {
 				panel1.add(textArea3);
 				textArea3.setBounds(700, 85, 120, 55);
 
+
 				// ---- button5 ----
 				button5.setText("\u590d\u5236");
 				button5.setForeground(Color.black);
@@ -299,15 +360,16 @@ public class MyJframe extends JFrame {
 					panel2.add(label1);
 					label1.setBounds(new Rectangle(new Point(45, 90), label1.getPreferredSize()));
 
-					// ---- textField1 ----
+					// ---- textField1 ----  版本管控仓名文本域
 					textField1.setBackground(Color.white);
 					textField1.setForeground(Color.black);
-					textField1.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+					textField1.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 14));
 					textField1.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
 					textField1.setToolTipText("d");
 					textField1.setMargin(new Insets(10, 10, 10, 10));
 					panel2.add(textField1);
 					textField1.setBounds(100, 65, 855, 70);
+//					textField1.setText("版本管控仓名");
 
 					// ---- label2 ----
 					label2.setText("\u5206\u652f");
@@ -317,10 +379,10 @@ public class MyJframe extends JFrame {
 					panel2.add(label2);
 					label2.setBounds(35, 165, 50, 40);
 
-					// ---- textField2 ----
+					// ---- textField2 ----     版本管控分支文本域
 					textField2.setBackground(Color.white);
 					textField2.setForeground(Color.black);
-					textField2.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+					textField2.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 14));
 					textField2.setMargin(new Insets(10, 10, 10, 10));
 					panel2.add(textField2);
 					textField2.setBounds(100, 165, 855, 40);
@@ -365,10 +427,10 @@ public class MyJframe extends JFrame {
 					panel2.add(label6);
 					label6.setBounds(40, 240, 50, 40);
 
-					// ---- textField3 ----
+					// ---- textField3 ----     版本管控tag文本域
 					textField3.setBackground(Color.white);
 					textField3.setForeground(Color.black);
-					textField3.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+					textField3.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 14));
 					textField3.setMargin(new Insets(10, 10, 10, 10));
 					panel2.add(textField3);
 					textField3.setBounds(100, 240, 855, 40);
@@ -417,15 +479,16 @@ public class MyJframe extends JFrame {
 					panel3.setBorder(null);
 					panel3.setLayout(null);
 
-					// ---- textField4 ----
+					// ---- textField4 ----   配置仓仓文本域
 					textField4.setBackground(Color.white);
 					textField4.setForeground(Color.black);
-					textField4.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
-					textField4.setMargin(new Insets(10, 10, 10, 10));
+					textField4.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 15));
+//					textField4.setMargin(new Insets(10, 10, 10, 10));
 					panel3.add(textField4);
-					textField4.setBounds(95, 155, 855, 40);
+					textField4.setBounds(95, 155, 855,40 );
+//					textField4.setText("q");
 
-					// ---- textArea4 ----
+					// ---- textArea4 ----       配置仓包名
 					textArea4.setForeground(Color.black);
 					textArea4.setBackground(Color.white);
 					textArea4.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
@@ -434,14 +497,16 @@ public class MyJframe extends JFrame {
 					textArea4.setBorder(LineBorder.createBlackLineBorder());
 					panel3.add(textArea4);
 					textArea4.setBounds(95, 85, 420, 58);
+//					textArea4.setText("a");
 
-					// ---- textField5 ----
+					// ---- textField5 ----   配置仓分支文本域
 					textField5.setBackground(Color.white);
 					textField5.setForeground(Color.black);
-					textField5.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
-					textField5.setMargin(new Insets(10, 10, 10, 10));
+					textField5.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 15));
+//					textField5.setMargin(new Insets(10, 10, 10, 10));
 					panel3.add(textField5);
 					textField5.setBounds(95, 215, 855, 40);
+//					textField5.setText("bp");
 
 					// ---- label8 ----
 					label8.setText("\u5206\u652f");
@@ -451,6 +516,7 @@ public class MyJframe extends JFrame {
 					panel3.add(label8);
 					label8.setBounds(30, 215, 50, 40);
 
+
 					// ---- label7 ----
 					label7.setText("\u4ed3");
 					label7.setBackground(Color.white);
@@ -458,6 +524,7 @@ public class MyJframe extends JFrame {
 					label7.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
 					panel3.add(label7);
 					label7.setBounds(35, 160, 35, 24);
+
 
 					// ---- label5 ----
 					label5.setText("Package_Name");
@@ -567,7 +634,7 @@ public class MyJframe extends JFrame {
 	private JFrame frame1;
 	private JPanel panel1;
 	private JScrollPane scrollPane1;
-	private JTextArea textArea1;
+	private JTextArea textArea1;   //版本号文本域
 	private JButton button1; // 获取按钮
 	private JLabel label3;
 	private JButton button4;
@@ -576,21 +643,21 @@ public class MyJframe extends JFrame {
 	private JPanel panel2;
 	private JLabel label4;
 	private JLabel label1;
-	private JTextField textField1; // 版本号文本域
+	private JTextField textField1; // 版本管控仓名文本域
 	private JLabel label2;
-	private JTextField textField2;
+	private JTextField textField2; // 版本管控分支文本域
 	private JButton button2;
 	private JButton button3;
 	private JButton button7;  //复制push命令按钮
 	private JButton button6; //复制clone命令按钮
 	private JLabel label6;
-	private JTextField textField3;
+	private JTextField textField3; // 版本管控tag文本域
 	private JButton button8;
 	private JTextArea textArea2;
 	private JPanel panel3;
-	private JTextField textField4;
-	private JTextArea textArea4;
-	private JTextField textField5;
+	private JTextField textField4;   //配置仓仓文本域
+	private JTextArea textArea4;     //配置仓包名文本域
+	private JTextField textField5;   //配置仓仓名
 	private JLabel label8;
 	private JLabel label7;
 	private JLabel label5;
@@ -603,3 +670,656 @@ public class MyJframe extends JFrame {
 	String versionNumber;
 	// JFormDesigner - End of variables declaration //GEN-END:variables
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<build_desc patch_tool_git_branch="master" patch_tool_git_tag="17be0501aab6c56b72bb62a9964d350e0841f7b8" patch_pipeline_git_tag="c8c8fae57a571bb4bff647a31af752415438b217" patch_pipeline_git_path="http://mgit-tm.rnd.huawei.com/huawei/ci_tool/R9/component_tag_patch.git" patch_pipeline_git_branch="pipeline" patch_tool_git_path="http://mgit-tm.rnd.huawei.com/huawei/ci_tool/R9/component_tag_patch.git" config_repository="http://mgit-tm.rnd.huawei.com/huawei/ci_tool/R9/base_package/patch_config.git" config_tag="626c1e1b5ae8e926909d8c3bae6b55a1f2b74bb4" package_name="BNE-LGRP1-CHN_SM6225_performance" config_branch="ccm_release_HarmonyOS4.0.0_patch_01" slave_git_path="http://mgit-tm.rnd.huawei.com/huawei/ci_tool/resource_pool/client" slave_git_branch="master" slave_git_tag="7a4bf957d1a37b15adb6e37b98b6a6ba1ad1a6d6" pipeline_git_branch="pipeline" version_tool_git_branch="master" pipeline_git_tag="2af436441910f007a647feaed1e42f7a3b216edc" pipeline_git_repository="http://mgit-tm.rnd.huawei.com/huawei/ci_tool/R9/base_package" version_tool_git_repository="http://mgit-tm.rnd.huawei.com/huawei/ci_tool/R9/base_package" version_tool_git_tag="3ac413f7db49d13867b88554d635505bf9ca2598"> 
+  <input> 
+    <chipset> 
+      <odm_component> 
+        <!-- 配置项<storage_type>设置拍包获取的odm_component的归档类型;如果是perforce可以不填，如果是静态服务器填写static_server-->  
+        <storage_type/>  
+        <!-- 配置项<storage_path>设置拍包获取的odm_component的服务器根路径（必填项） -->  
+        <storage_path/>  
+        <!-- 配置项<product_name>设置拍包获取的odm_component的产品名（必填项） -->  
+        <product_name/>  
+        <!-- 配置项<emui_android>设置拍包获取的odm_component对应的chipset_component的EMUI版本和安卓版本，例如：5.0.0.N-->  
+        <emui_android/>  
+        <!-- 配置项<branch>设置拍包获取的odm_component对应的chipset_component的分支-->  
+        <branch/>  
+        <!-- 配置项<chipset_platform>设置拍包获取的odm_component对应的chipset_component的平台名称（必填项）-->  
+        <chipset_platform/>  
+        <!-- 配置项<other_dimension>设置拍包获取的odm_component的具体选项名称，只与地域维度相关（必填项） -->  
+        <other_dimension/>  
+        <!-- 配置项<tag>设置拍包获取的odm_component的标签号（可选项） -->  
+        <tag/> 
+      </odm_component>  
+      <chipset_component> 
+        <!-- 配置项<storage_type>设置拍包获取的chipset_component的归档类型;如果是perforce可以不填，如果是静态服务器填写static_server-->  
+        <storage_type/>  
+        <!-- 配置项<storage_path>设置拍包获取的chipset_component的服务器根路径（必填项） -->  
+        <storage_path>rnd-siahelix107:1666</storage_path>  
+        <!-- 配置项<emui_android>设置拍包获取的chipset_component的EMUI版本和安卓版本，例如：5.0.0.N-->  
+        <emui_android>104.0.0.X</emui_android>  
+        <!-- 配置项<branch>设置拍包获取的chipset_component的分支-->  
+        <branch>ccm_release_HarmonyOS4.0.0_mas_block_patch_01</branch>  
+        <!-- 配置项<chipset_platform>设置拍包获取的chipset_component的平台名称，高通平台需要加上modem名称（必填项）-->  
+        <chipset_platform>SM6225</chipset_platform>  
+        <!--配置项<other_dimension>设置拍包获取的chipset_component的具体选项名称（必填项）-->  
+        <other_dimension>c_per_L/SM6225_c_per_L</other_dimension>  
+        <!-- 配置项<tag>设置拍包获取的chipset_component的标签号（可选项） -->  
+        <tag>chipset_104.0.0.X_SM6225_ccm_release_HarmonyOS4.0.0_mas_block_patch_01_20230816_01</tag>  
+        <!--配置项<chipset_platform_level>设置芯片平台级别，用于从海思侧自适应字典chiplist.txt中匹配对应芯片平台，若是丹佛图森芯片平台共芯片组件，则必须配置，其它情况为空即可-->  
+        <chipset_platform_level/>  
+        <chipset_class/> 
+      </chipset_component> 
+    </chipset>  
+    <system> 
+      <system_component> 
+        <!-- 配置项<storage_type>设置拍包获取的chipset_component的归档类型;如果是perforce可以不填，如果是静态服务器填写static_server-->  
+        <storage_type/>  
+        <!-- 配置项<storage_path>设置拍包获取的system_component的服务器根路径（必填项） -->  
+        <storage_path>rnd-shahelix112:1666</storage_path>  
+        <!-- 配置项<emui_android>设置拍包获取的system_component的EMUI版本和安卓版本，例如：5.0.0.N -->  
+        <emui_android>104.0.0.X</emui_android>  
+        <!-- 配置项<branch>设置拍包获取的system_component的分支-->  
+        <branch>ccm_release_HarmonyOS4.0.0_QCOM_patch_01</branch>  
+        <!-- 配置项<tool_chain>设置定制获取的system component编译的指令集，填generic_a15,generic_a53,generic_a57等等（必填项） -->  
+        <!--如果不同国家维度编译参数不一致，则该处需要填写generic_a15_china、generic_a15_global等 -->  
+        <!--需要与系统组件的责任人进行确认 -->  
+        <tool_chain>ohosqssi</tool_chain>  
+        <!-- 配置项<region>设置定制获取的system component的地域，只能填 china-full 或者 china-lite、global-full、global-lite等（必填项） -->  
+        <region>china-lite-qcom</region>  
+        <!-- 配置项<region>设置定制获取的system component的分辨率，填dpi640,dpi480,dpi320,dpi240,dpi400（必填项） -->  
+        <dpi>dpi480</dpi>  
+        <!-- 配置项<tag>设置定制获取的system component的标签号（可选项） -->  
+        <tag>system_104.0.0.X_ccm_release_HarmonyOS4.0.0_QCOM_patch_01_20230816_11</tag> 
+      </system_component> 
+    </system>  
+    <product> 
+      <product_component> 
+        <!-- 配置项<storage_type>设置拍包获取的product_component的归档类型;如果是perforce可以不填，如果是静态服务器填写static_server-->  
+        <storage_type/>  
+        <!-- 配置项<storage_path>设置拍包获取的product_component的服务器根路径（必填项） -->  
+        <storage_path>rnd-siahelix107:1666</storage_path>  
+        <!-- 配置项<emui_android>设置拍包获取的product_component的EMUI版本和安卓版本，例如：5.0.0.N-->  
+        <emui_android>104.0.0.X</emui_android>  
+        <!-- 配置项<branch>设置拍包获取的product_component的分支 -->  
+        <branch>ccm_release_HarmonyOS4.0.0_patch_01</branch>  
+        <!-- 配置项<product_name>设置拍包获取的product_component的产品名称(必填项)-->  
+        <product_name>BNE</product_name>  
+        <!-- 配置项<region>设置产品组建的形态（如果产品组件区分形态，则必填项） -->  
+        <region>china</region>  
+        <!-- 配置项<component_tag>设置拍包获取的product_component的标签号（可选项） -->  
+        <tag>product_104.0.0.X_BNE_ccm_release_HarmonyOS4.0.0_patch_01_20230816_01</tag> 
+      </product_component> 
+    </product>  
+    <cust> 
+      <cust_component> 
+        <!-- 配置项<storage_type>设置拍包获取的cust_component的归档类型;如果是perforce可以不填，如果是静态服务器填写static_server-->  
+        <storage_type/>  
+        <!-- 配置项<storage_path>设置拍包获取的cust_component的服务器根路径 -->  
+        <storage_path>rnd-shahelix105:1666</storage_path>  
+        <!-- 配置项<emui_android>设置拍包获取的cust_component的EMUI版本和安卓版本，例如：5.0.0.N -->  
+        <emui_android>104.0.0.X</emui_android>  
+        <!-- 配置项<branch>设置拍包获取的cust_component的配置文件的分支 -->  
+        <branch>ccm_release_HarmonyOS4.0.0_hms</branch>  
+        <!-- 配置项<operator_name>设置拍包获取的cust_component的运营商名称（必填项） -->  
+        <operator_name>common</operator_name>  
+        <!-- 配置项<var>设置获取的cust_component的dpi_pix_fs的值，例如dpi240_1920x1080_ext4，如果某项的值为空，可不填,例如 pix为空，dpi240_ext4（必填项） -->  
+        <!-- 配置项<region>设置定制组建的形态（如果定制组件区分形态，则必填项） -->  
+        <region>china</region>  
+        <var>erofs</var>  
+        <!-- 配置项<component_tag>设置拍包获取的cust_component的标签号（可选项） -->  
+        <tag>cust_104.0.0.X_ccm_release_HarmonyOS4.0.0_hms_common_20230802_01</tag> 
+      </cust_component> 
+    </cust>  
+    <!--基础包扩展支撑other_component(名字不定，组件数量可大于1)下载, other组件需要支持可扩展-->  
+    <other> 
+      <preas_component> 
+        <!-- 配置项<p4_storage_path>设置拍包获取的组件的服务器根路径 -->  
+        <p4_storage_path>rnd-siahelix107:1666</p4_storage_path>  
+        <!-- 配置项<p4_sourcepath>设置组件的资源所在的路径 -->  
+        <p4_sourcepath>preas_component/104.0.0.X/BNE/config_release_HarmonyOS4.0.0/component/china</p4_sourcepath>  
+        <!-- 配置项<tag>设置拍包获取的组件的标签号（可选项） -->  
+        <tag>preas_104.0.0.X_BNE_config_release_HarmonyOS4.0.0_20230626_01</tag> 
+      </preas_component>  
+      <preavs_component> 
+        <!-- 配置项<p4_storage_path>设置拍包获取的组件的服务器根路径 -->  
+        <p4_storage_path>rnd-siahelix107:1666</p4_storage_path>  
+        <!-- 配置项<p4_sourcepath>设置组件的资源所在的路径 -->  
+        <p4_sourcepath>preavs_component/104.0.0.X/SM6225/config_release_HarmonyOS4.0.0/component/empty</p4_sourcepath>  
+        <!-- 配置项<tag>设置拍包获取的组件的标签号（可选项） -->  
+        <tag>preavs_104.0.0.X_SM6225_config_release_HarmonyOS4.0.0_20230624_01</tag> 
+      </preavs_component> 
+    </other>  
+    <!--只能配置需要修改与假版本号相关的prop项，如果没有该项可以去除-->  
+    <prop> 
+      <!--default_update_file填写默认的prop项文件-->  
+      <modify default_update_file="hw_product/etc/prop/local.prop"> 
+        <!--name设置prop项的名称，value设置prop项的值，update_file设置需要修改的prop项的路径，如果不填写，则默认为default_update_file的路径-->  
+        <property name="ro.comp.hl.product_base_version" value="&quot;BNE-LGRP1-CHN 4.0.0.111&quot;"/>  
+        <property name="ro.hw.base_all_groupversion" value="&quot;G3.0&quot;"/>  
+        <property name="ro.build.description" value="&quot;BNE-AL00-user 104.0.0 HUAWEIBNE-AL00 111-CHN-LGRP1 release-keys&quot;"/>  
+        <property name="ro.comp.hl.product_base_version.real" value="&quot;BNE-LGRP1-CHN 104.0.0.111&quot;"/> 
+      </modify> 
+    </prop>  
+    <!--支持配置分区集中管控仓，如果不配置，则使用默认的管控仓-->  
+    <rom_size> 
+      <rom_config> 
+        <repository/>  
+        <branch/>  
+        <tag/> 
+      </rom_config>  
+      <system_rom> 
+        <param_key/> 
+      </system_rom> 
+    </rom_size>  
+    <!-- 配置项<data_hw_init_size>设置data镜像制作前资源文件夹总大小，数值单位以KB计算-->  
+    <data_hw_init_size/>  
+    <!-- 配置项<data_movie_size>设置data预制的视频资源总大小，数值单位以KB计算-->  
+    <data_movie_size/>  
+    <tools> 
+      <!-- 配置项<host_bin_info>设置host_bin工具的配置，请根据产品实际需要进行配置 -->  
+      <host_bin_info> 
+        <system> 
+          <repository>http://mgit-tm.rnd.huawei.com/huawei/Hostbin</repository>  
+          <!-- 配置项branch设置system host_bin git仓对应的分支名称(必填项) -->  
+          <branch>config_release_HarmonyOS4.0.0</branch>  
+          <tag>6aa71fe93fb2c96057b5aab285255100a03ae2ca</tag> 
+        </system> 
+      </host_bin_info>  
+      <make_image_tool> 
+        <!-- 配置项fs设置涉及多个地方使用，1.product.img文件系统的格式、version_avb.img和preload_avb.img的文件系统 -->  
+        <fs>ext4</fs>  
+        <!-- 配置项system_fs设置make system.img时system文件系统的格式(不填使用之前默认格式) -->  
+        <system_fs>erofs</system_fs>  
+        <system_size>2936012800</system_size>  
+        <userdata_fs>f2fs</userdata_fs>  
+        <tag/>  
+        <!--配置项is_remake_cust_image用于控制重做cust.img，目前只针对高通产品(为了上VB1.0签名方案)，非高通产品为空或者false即可-->  
+        <!-- 配置项设为true时，base重新make cust.img。其他则跳过该流程 -->  
+        <is_make_cust_img/>  
+        <!-- 构建镜像参数通过设置环境变量的方式进行传递，多变量之间用空格分隔。比如进行商用版本签名设置变量为RELEASE_SIGN=true -->  
+        <env_argument>RELEASE_SIGN=true</env_argument>  
+        <all_erofs_image_version>kernel_v414</all_erofs_image_version> 
+      </make_image_tool>  
+      <package_res> 
+        <!-- 配置项repository设置拍包资源的仓地址(必填项) -->  
+        <repository>http://mgit-tm.rnd.huawei.com/config/version_component/update_pkg_res/BNE_4G_CHN_base</repository>  
+        <!-- 配置项branch设置拍包资源的分支名称(必填项) -->  
+        <branch>config_trunk_HarmonyOS4.X</branch>  
+        <tag>41130b132090f9a09c83b096ed1a0fb92b6a81e9</tag> 
+      </package_res>  
+      <package_res_cfg> 
+        <!-- 配置项repository设置拍包配置文件的仓地址(必填项) -->  
+        <repository>http://mgit2-tm.rnd.huawei.com/huawei/platform/common/update_pkg_res</repository>  
+        <!-- 配置项branch设置拍包配置文件的分支名称(必填项) -->  
+        <branch>Br_trunk_res_HM4_QCOM6225_package_cfg</branch>  
+        <tag>b1d920df039bbc508741812e8c3aaea5eea3bb27</tag> 
+      </package_res_cfg>  
+      <!--网络签名服务器ip或域名 (必填项)-->  
+      <sign_center_server>rnd-signserver.huawei.com</sign_center_server>  
+      <!--升级包签名秘钥路径 (必填项)-->  
+      <key_path>/root/Key/updateapp_key</key_path>  
+      <specific_package_tool> 
+        <!-- 配置项repository设置拍包配置文件的仓地址(必填项) -->  
+        <repository/>  
+        <!-- 配置项branch设置拍包配置文件的分支名称(必填项) -->  
+        <branch/>  
+        <tag/>  
+        <!-- 配置项，设置拍包配置脚本名称(必填项) -->  
+        <script_name/> 
+      </specific_package_tool>  
+      <!-- 配置项specific_partition，设置设置特殊分区表名称及工具(非必填项)，目前使用大屏配置 -->  
+      <specific_partition> 
+        <!-- 配置项ptable_name-分区表工具(必填项)，配置为归档到芯片组件component下路径 -->  
+        <read_ptable_tool/>  
+        <update_ptable_tool/>  
+        <!-- 配置项ptable_name-分区表名称(必填项) -->  
+        <ptable_name/>  
+        <!-- 配置项update_ptable_image_switch-是否更新分区表开关，值为（yes/no）,默认是yes,不配置也为yes-->  
+        <update_ptable_image_switch/> 
+      </specific_partition>  
+      <patch> 
+        <diff_oem/> 
+      </patch>  
+      <make> 
+        <ab_img/> 
+      </make>  
+      <oem> 
+        <config/> 
+      </oem> 
+    </tools>  
+    <vndk_snapshot> 
+      <!-- 配置项<vmp_path> treble升级版本制作需要配置(适用于基于已经上传到vmp的版本制作treble升级版本的情景)-->  
+      <!-- 配置项<vmp_path>设置要制作vndk snapshot的版本在vmp的存放路径，例如：\\shard1vs1dr-rd\IT_VMP_SHA_105_F\BL22724769_BLA-AL00B 8.0.0.45xxx-->  
+      <vmp_path/>  
+      <!-- 配置项<storage_path>芯片及系统跨android版本对接制作需要配置(即需要配置对应芯片android版本的系统组件的归档路径)-->  
+      <!-- 配置项<storage_path>设置拍包获取vndk_snapshot的system_component的服务器根路径（可选项）例如：100.121.36.149:1666 -->  
+      <storage_path/>  
+      <!-- 配置项<sub_storage_path>设置拍包获取vndk_snapshot的system_component具体形态的路径（可选项）例如：//system_component/6.0.0.O/system_config/component/generic_a15/china-full/dpi480 -->  
+      <sub_storage_path/>  
+      <!-- 配置项<tag>设置获取的system component的标签号（可选项） -->  
+      <tag/> 
+    </vndk_snapshot>  
+    <generate_permission_hash/> 
+  </input>  
+  <output> 
+    <!-- 配置项update_app的name属性用来设置基础升级包存放的目录名称,该处name只能配置(dex/odex/no_log/root),可配置多个update_app节点 -->  
+    <!--用户根据产品需要进行配置-->  
+    <update_app name="dex"> 
+      <package> 
+        <file name="hyp.mbn" type=""/>  
+        <file name="logfs_ufs_8mb.bin" type=""/>  
+        <file name="multi_image.mbn" type=""/>  
+        <file name="BNE/recoveryboot.img" type=""/>  
+        <file name="BNE/erecoveryboot.img" type=""/>  
+        <file name="rtice.mbn" type=""/>  
+        <file name="persist.img" type=""/>  
+        <file name="boot_ramdisk_v2/boot_ramdisk.img" type=""/>  
+        <file name="system.img" type="dex"/>  
+        <file name="hw_product.img" type="log"/>  
+        <file name="userdata.img" type="dex"/>  
+        <file name="boot.img" type=""/>  
+        <file name="erecovery_vendor.img" type=""/>  
+        <file name="recovery_ramdisk_v2/erecovery_ramdisk.img" type=""/>  
+        <file name="eng_vendor.img" type=""/>  
+        <file name="recovery_ramdisk_v2/recovery_ramdisk.img" type=""/>  
+        <file name="vendor.img" type=""/>  
+        <file name="recovery_vendor.img" type=""/>  
+        <file name="obj/PACKAGING/vendor_intermediates/vendor_image_info.txt" type=""/>  
+        <file name="cust.img" type=""/>  
+        <file name="cust.map" type=""/>  
+        <file name="BNE/odm.img" type=""/>  
+        <file name="BNE/odm.map" type=""/>  
+        <file name="eng_system.img" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastboot.exe" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/dev_fastboot_tools_bengal" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/dev_fastboot_tools_bengal/fastboot_basepkg/updateinadb_basepkg_only.bat" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/AdbWinApi.dll" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/adb" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastboot" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastbootd" type=""/>  
+        <file name="vendor.map" type=""/>  
+        <file name="hw_product.map" type=""/>  
+        <file name="system.map" type=""/>  
+        <file name="vbmeta.img" type=""/>  
+        <file name="preas_r.img" type=""/>  
+        <file name="preas_r.map" type=""/>  
+        <file name="preas_r.map.bin" type=""/>  
+        <file name="preavs_r.img" type=""/>  
+        <file name="preavs_r.map" type=""/>  
+        <file name="preavs_r.map.bin" type=""/>  
+        <file name="BNE/dtbo.img" type=""/>  
+        <file name="dtb.img" type=""/>  
+        <file name="abl.elf" type=""/>  
+        <file name="tz.mbn" type=""/>  
+        <file name="xbl.elf" type=""/>  
+        <file name="devcfg.mbn" type=""/>  
+        <file name="prog_emmc_firehose.mbn" type=""/>  
+        <file name="imagefv.elf" type=""/>  
+        <file name="qupv3fw.elf" type=""/>  
+        <file name="km4.mbn" type=""/>  
+        <file name="uefi_sec.mbn" type=""/>  
+        <file name="featenabler.mbn" type=""/>  
+        <file name="storsec.mbn" type=""/>  
+        <file name="cache.img" type=""/>  
+        <file name="erecovery_boot.img" type=""/>  
+        <file name="BNE/vbmeta_odm.img" type=""/>  
+        <file name="vbmeta.img" type=""/>  
+        <file name="vbmeta_vendor.img" type=""/>  
+        <file name="vbmeta_system.img" type=""/>  
+        <file name="vbmeta_hw_product.img" type=""/>  
+        <file name="vbmeta_cust.img" type=""/>  
+        <file name="recovery_vbmeta.img" type=""/>  
+        <file name="erecovery_vbmeta.img" type=""/>  
+        <file name="gpt/ufs/partition_internal_hyperhold_pt/out/gpt_both0.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main0.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main1.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main2.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main3.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main4.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main5.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup0.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup1.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup2.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup3.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup4.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup5.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch0.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch1.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch2.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch3.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch4.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch5.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram0.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram1.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram2.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram3.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram4.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram5.xml" type=""/>  
+        <file name="metadata.img" type=""/>  
+        <file name="nvme.img" type=""/>  
+        <file name="android-info.txt" type=""/>  
+        <file name="xbl_config.elf" type=""/>  
+        <file name="dspso.bin" type=""/>  
+        <file name="NON-HLOS.bin" type=""/>  
+        <file name="ufs/provision_ufs22.xml" type=""/>  
+        <file name="BTFM.bin" type=""/>  
+        <file name="apdp.mbn" type=""/>  
+        <file name="rpm.mbn" type=""/> 
+      </package> 
+    </update_app>  
+    <update_app name="odex"> 
+      <package> 
+        <file name="hyp.mbn" type=""/>  
+        <file name="logfs_ufs_8mb.bin" type=""/>  
+        <file name="multi_image.mbn" type=""/>  
+        <file name="BNE/recoveryboot.img" type=""/>  
+        <file name="BNE/erecoveryboot.img" type=""/>  
+        <file name="rtice.mbn" type=""/>  
+        <file name="persist.img" type=""/>  
+        <file name="system.img" type="odex"/>  
+        <file name="hw_product.img" type="log"/>  
+        <file name="userdata.img" type="odex"/>  
+        <file name="boot.img" type=""/>  
+        <file name="erecovery_vendor.img" type=""/>  
+        <file name="recovery_ramdisk_v2/erecovery_ramdisk.img" type=""/>  
+        <file name="eng_vendor.img" type=""/>  
+        <file name="boot_ramdisk_v2/boot_ramdisk.img" type=""/>  
+        <file name="recovery_ramdisk_v2/recovery_ramdisk.img" type=""/>  
+        <file name="vendor.img" type=""/>  
+        <file name="recovery_vendor.img" type=""/>  
+        <file name="obj/PACKAGING/vendor_intermediates/vendor_image_info.txt" type=""/>  
+        <file name="gpt/ufs/partition_internal_hyperhold_pt/out/gpt_both0.bin" type=""/>  
+        <file name="cust.img" type=""/>  
+        <file name="cust.map" type=""/>  
+        <file name="BNE/odm.img" type=""/>  
+        <file name="BNE/odm.map" type=""/>  
+        <file name="eng_system.img" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastboot.exe" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/dev_fastboot_tools_bengal" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/dev_fastboot_tools_bengal/fastboot_basepkg/updateinadb_basepkg_only.bat" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/AdbWinApi.dll" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/adb" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastboot" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastbootd" type=""/>  
+        <file name="vendor.map" type=""/>  
+        <file name="hw_product.map" type=""/>  
+        <file name="system.map" type=""/>  
+        <file name="vbmeta.img" type=""/>  
+        <file name="preas_r.img" type=""/>  
+        <file name="preas_r.map" type=""/>  
+        <file name="preas_r.map.bin" type=""/>  
+        <file name="preavs_r.img" type=""/>  
+        <file name="preavs_r.map" type=""/>  
+        <file name="preavs_r.map.bin" type=""/>  
+        <file name="BNE/dtbo.img" type=""/>  
+        <file name="dtb.img" type=""/>  
+        <file name="abl.elf" type=""/>  
+        <file name="tz.mbn" type=""/>  
+        <file name="xbl.elf" type=""/>  
+        <file name="devcfg.mbn" type=""/>  
+        <file name="prog_emmc_firehose.mbn" type=""/>  
+        <file name="imagefv.elf" type=""/>  
+        <file name="qupv3fw.elf" type=""/>  
+        <file name="km4.mbn" type=""/>  
+        <file name="uefi_sec.mbn" type=""/>  
+        <file name="featenabler.mbn" type=""/>  
+        <file name="storsec.mbn" type=""/>  
+        <file name="cache.img" type=""/>  
+        <file name="erecovery_boot.img" type=""/>  
+        <file name="BNE/vbmeta_odm.img" type=""/>  
+        <file name="vbmeta.img" type=""/>  
+        <file name="vbmeta_vendor.img" type=""/>  
+        <file name="vbmeta_system.img" type=""/>  
+        <file name="vbmeta_hw_product.img" type=""/>  
+        <file name="vbmeta_cust.img" type=""/>  
+        <file name="recovery_vbmeta.img" type=""/>  
+        <file name="erecovery_vbmeta.img" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main0.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main1.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main2.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main3.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main4.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main5.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup0.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup1.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup2.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup3.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup4.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup5.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch0.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch1.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch2.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch3.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch4.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch5.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram0.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram1.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram2.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram3.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram4.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram5.xml" type=""/>  
+        <file name="metadata.img" type=""/>  
+        <file name="nvme.img" type=""/>  
+        <file name="android-info.txt" type=""/>  
+        <file name="xbl_config.elf" type=""/>  
+        <file name="dspso.bin" type=""/>  
+        <file name="NON-HLOS.bin" type=""/>  
+        <file name="ufs/provision_ufs22.xml" type=""/>  
+        <file name="BTFM.bin" type=""/>  
+        <file name="apdp.mbn" type=""/>  
+        <file name="rpm.mbn" type=""/> 
+      </package> 
+    </update_app>  
+    <update_app name="no_log"> 
+      <package> 
+        <file name="hyp.mbn" type=""/>  
+        <file name="logfs_ufs_8mb.bin" type=""/>  
+        <file name="multi_image.mbn" type=""/>  
+        <file name="nolog/nolog/BNE/recoveryboot.img" type=""/>  
+        <file name="BNE/erecoveryboot.img" type=""/>  
+        <file name="rtice.mbn" type=""/>  
+        <file name="persist.img" type=""/>  
+        <file name="system.img" type="odex"/>  
+        <file name="hw_product.img" type="no_log"/>  
+        <file name="userdata.img" type="odex"/>  
+        <file name="nolog/nolog/boot.img" type=""/>  
+        <file name="nolog/nolog/erecovery_vendor.img" type=""/>  
+        <file name="recovery_ramdisk_v2/erecovery_ramdisk.img" type=""/>  
+        <file name="eng_vendor.img" type=""/>  
+        <file name="boot_ramdisk_v2/boot_ramdisk.img" type=""/>  
+        <file name="recovery_ramdisk_v2/recovery_ramdisk.img" type=""/>  
+        <file name="nolog/nolog/vendor.img" type=""/>  
+        <file name="nolog/nolog/recovery_vendor.img" type=""/>  
+        <file name="obj/PACKAGING/vendor_intermediates/vendor_image_info.txt" type=""/>  
+        <file name="gpt/ufs/partition_internal_hyperhold_pt/out/gpt_both0.bin" type=""/>  
+        <file name="cust.img" type=""/>  
+        <file name="cust.map" type=""/>  
+        <file name="BNE/odm.img" type=""/>  
+        <file name="BNE/odm.map" type=""/>  
+        <file name="eng_system.img" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastboot.exe" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/dev_fastboot_tools_bengal" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/dev_fastboot_tools_bengal/fastboot_basepkg/updateinadb_basepkg_only.bat" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/AdbWinApi.dll" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/adb" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastboot" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastbootd" type=""/>  
+        <file name="vendor.map" type=""/>  
+        <file name="hw_product.map" type=""/>  
+        <file name="system.map" type=""/>  
+        <file name="vbmeta.img" type=""/>  
+        <file name="preas_r.img" type=""/>  
+        <file name="preas_r.map" type=""/>  
+        <file name="preas_r.map.bin" type=""/>  
+        <file name="preavs_r.img" type=""/>  
+        <file name="preavs_r.map" type=""/>  
+        <file name="preavs_r.map.bin" type=""/>  
+        <file name="BNE/dtbo.img" type=""/>  
+        <file name="dtb.img" type=""/>  
+        <file name="abl.elf" type=""/>  
+        <file name="tz.mbn" type=""/>  
+        <file name="xbl.elf" type=""/>  
+        <file name="devcfg.mbn" type=""/>  
+        <file name="prog_emmc_firehose.mbn" type=""/>  
+        <file name="imagefv.elf" type=""/>  
+        <file name="qupv3fw.elf" type=""/>  
+        <file name="km4.mbn" type=""/>  
+        <file name="uefi_sec.mbn" type=""/>  
+        <file name="featenabler.mbn" type=""/>  
+        <file name="storsec.mbn" type=""/>  
+        <file name="cache.img" type=""/>  
+        <file name="nolog/nolog/erecovery_boot.img" type=""/>  
+        <file name="BNE/vbmeta_odm.img" type=""/>  
+        <file name="vbmeta.img" type=""/>  
+        <file name="nolog/nolog/vbmeta_vendor.img" type=""/>  
+        <file name="vbmeta_system.img" type=""/>  
+        <file name="vbmeta_hw_product.img" type=""/>  
+        <file name="vbmeta_cust.img" type=""/>  
+        <file name="recovery_vbmeta.img" type=""/>  
+        <file name="erecovery_vbmeta.img" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main0.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main1.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main2.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main3.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main4.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_main5.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup0.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup1.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup2.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup3.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup4.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/gpt_backup5.bin" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch0.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch1.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch2.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch3.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch4.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/patch5.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram0.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram1.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram2.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram3.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram4.xml" type=""/>  
+        <file name="gpt/ufs/partition_fastboot_hyperhold/rawprogram5.xml" type=""/>  
+        <file name="metadata.img" type=""/>  
+        <file name="nvme.img" type=""/>  
+        <file name="android-info.txt" type=""/>  
+        <file name="xbl_config.elf" type=""/>  
+        <file name="dspso.bin" type=""/>  
+        <file name="NON-HLOS.bin" type=""/>  
+        <file name="ufs/provision_ufs22.xml" type=""/>  
+        <file name="BTFM.bin" type=""/>  
+        <file name="apdp.mbn" type=""/>  
+        <file name="rpm.mbn" type=""/> 
+      </package> 
+    </update_app>  
+    <update_app name="root"> 
+      <package> 
+        <file name="root_img/eng_vendor.img" type=""/>  
+        <file name="root_img/BNE/recoveryboot.img" type=""/>  
+        <file name="root_img/perf_img/recovery_ramdisk_v2/recovery_ramdisk.img" type=""/>  
+        <file name="root_img/recovery_vendor.img" type=""/>  
+        <file name="root_img/boot.img" type=""/>  
+        <file name="root_img/eng_system.img" type=""/>  
+        <file name="root_img/perf_img" type=""/>  
+        <file name="root_img/boot_ramdisk_v2/boot_ramdisk.img" type=""/>  
+        <file name="root_img/rphone" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastboot.exe" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/dev_fastboot_tools_bengal" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/dev_fastboot_tools_bengal/fastboot_basepkg/updateinadb_basepkg_only.bat" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/AdbWinApi.dll" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/adb" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastboot" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/get_root.sh" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/get_root.bat" type=""/>  
+        <file name="vendor/huawei/extra_qcom/manufacture/fastboot_download_tools/fastbootd" type=""/>  
+        <file name="root_img/vmlinux" type=""/> 
+      </package> 
+    </update_app>  
+    <!-- 配置项adjust_archive_result用于配置调整归档目录结构的控制文件的git仓信息(可选项) -->  
+    <adjust_archive_result> 
+      <!-- 配置项repository设置仓地址(必填项) -->  
+      <repository>http://mgit-tm.rnd.huawei.com/config/Para/Zidane_adjust_config</repository>  
+      <!-- 配置项branch设置仓分支名称(必填项) -->  
+      <branch>config_release_HarmonyOS4.0.0</branch>  
+      <!-- 配置项branch设置仓tag点(可选项) -->  
+      <tag>b062b2ff60b1d59da4a5dd07815b001c6dfea4b8</tag>  
+      <!-- 配置项adjust_file设置控制文件地址(必填项) -->  
+      <adjust_file>adjust_archive_result.xml</adjust_file> 
+    </adjust_archive_result>  
+    <updateapp_backup_path> 
+      <!-- 配置项<storage_type>设置基础包归档类型;如果是perforce可以不填，如果是静态服务器填写static_server-->  
+      <storage_type/>  
+      <!-- 配置项storage_path用来设置升级包的归档服务器的根路径;配置项auto_download是用来设置是否自动下载基础包版本到perforce web服务，默认False 不自动下载-->  
+      <storage_path>rnd-siahelix107:1666</storage_path>  
+      <auto_download>False</auto_download> 
+    </updateapp_backup_path> 
+  </output> 
+</build_desc>
+
