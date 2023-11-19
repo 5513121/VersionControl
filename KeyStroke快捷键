@@ -1,0 +1,10 @@
+//ctrl+Q
+menuItem1.setAccelerator(KeyStroke.getKeyStroke('Q',InputEvent.CTRL_MASK));
+menuItem1.setAccelerator(KeyStroke.getKeyStroke("control Q "));
+
+//Alt+Shift+C
+menuItem1.setAccemenuItem1.setAccelerator(KeyStroke.getKeyStroke("alt shift released X "));lerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK |InputEvent.SHIFT_MASK, true));
+menuItem1.setAccelerator(KeyStroke.getKeyStroke("alt shift released X "));
+
+//F5
+menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.F5, 0));
