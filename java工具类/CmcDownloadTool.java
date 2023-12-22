@@ -44,9 +44,15 @@ public class CmcDownloadTool {
         //saveLocal  下载后保存的位置  如：D:/cmc_upload_download/
         String NoSpaceversionNumber = versionNumber.replace(" ", "%20");
 
-        String command = "java -jar TRCartget.jar pull " + "\"" + versionNumber + "\"" + " -vp " + "\"" + cmcLocal + "\"" + "-ap" + saveLocal;     //下载命令
+        String formatSaveLocal = saveLocal.replace("\\", "/");
+        boolean exists = new File(formatSaveLocal).exists();
+        System.out.println(new File(formatSaveLocal).isDirectory());
+        while(!exists){
+               new File(formatSaveLocal).mkdirs();
+        }
+        String command = "java -jar TRCartget.jar pull " + "\"" + versionNumber + "\"" + " -vp " + "\"" + cmcLocal + "\"" + " -ap " +"\"" + formatSaveLocal+"\"" ;     //下载命令
 
-
+        System.out.println(command);
         try {
             Process process = Runtime.getRuntime().exec("cmd.exe /c " + command + " >>out.txt");
 
