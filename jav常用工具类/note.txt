@@ -1,0 +1,88 @@
+获取项目根路径：user.dir是一个系统属性，表示用户当前的工作目录，大多数情况下，用户的当前工作目录就是java项目的根目录（src文件的同级路径）
+System.getProperty("user.dir")
+结果：D:\code\idea\GetInfo
+
+
+java中执行CMD命令
+//创建目录结构
+/*
+*目录结构：运行目录\包类型\pr_path\pr_label
+* */
+String property = System.getProperty("user.dir"); //当前工作目录，src文件的同级路径
+String dirString =property+"\\"+ (prPath.replace("/", "\\"))+"\\"+prLabel;
+System.out.println("创建的目录结构： "+dirString);
+String createPrWorkspaceCommond="mkdir "+dirString;
+try {
+    Process process = Runtime.getRuntime().exec("cmd.exe /c " + createPrWorkspaceCommond+ " >>p4Download.txt");
+    try {
+        int waitFor = process.waitFor();    //用于阻塞进程  下载完版本后才可进行后续操作
+    } catch (InterruptedException e1) {
+        e1.printStackTrace();
+    }
+} catch (IOException e1) {
+    e1.printStackTrace();
+}
+
+获取线程：
+//取消下载按钮
+downloadProgres.dispose();
+ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+int i = threadGroup.activeCount();
+Thread[] threads = new Thread[i];
+threadGroup.enumerate(threads);
+System.out.println("线程总个数："+i);
+for (int j = 0; j < i; j++) {
+    String name = threads[j].getName();
+    System.out.println("第"+j+"个线程名为："+name);
+
+    if("DownloadThread".equals(name)){
+        if(threads[j].isAlive()){
+            threads[j].interrupt();
+            System.out.println("线程-"+threads[j].getName()+"  已中断");
+        }
+    }
+}
+
+匿名内部类多线程动态更新swing窗口
+new Thread(new Runnable() {
+    @Override
+    public void run() {
+        //重写方法
+    downloadProgress.getProgressBar1().setString("");
+    }
+}).start();
+
+
+
+java调用cmd执行命令
+try {
+            // 调用CMD命令
+            String command = "ipconfig";
+            Process process = Runtime.getRuntime().exec(command);
+            // 获取命令输出结果
+            InputStream inputStream = process.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "GBK")); // 设置编码为GBK
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            // 等待命令执行完成
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+java调用cmd执行ipconfig命令
+1.基础命令
+cmd /c dir 是执行完dir命令后关闭命令窗口。
+cmd /k dir 是执行完dir命令后不关闭命令窗口。
+cmd /c start dir 会打开一个新窗口后执行dir指令，原窗口会关闭。
+cmd /k start dir 会打开一个新窗口后执行dir指令，原窗口不会关闭
+2.执行完毕后不关闭cmd页面
+private static void cmdExec() {
+   try {
+       Runtime.getRuntime().exec("cmd /k start cmd.exe /k ipconfig");
+   } catch (Exception e) {
+       log.error(e.getMessage(), e);
+   }
+}
