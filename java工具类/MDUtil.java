@@ -27,7 +27,7 @@ public class MDUtil {
 
 
     public static void main(String[] args) {
-        System.out.println(encrypt("lmy1024++"));
-        System.out.println(decrypt("6c6d79313032342b2b"));
+        System.out.println(encrypt(""));
+        System.out.println(decrypt(""));
     }
 }
