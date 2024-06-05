@@ -1,0 +1,115 @@
+问题说明：
+ava后端执行cmd命令，windows上命令行能够成功，但是java使用exec执行，大部分时间都卡顿，无法执行完，也不报错。
+1
+二、阻塞原因
+Java执行Runtime.getRuntime().exec()时，JVM会创建一个新的子进程去调用cmd窗口命令，同时该子进程与JVM建立三个连接管道：标准输入流（getInputStream）、标准输出流（getOutputStream）、标准错误流（getErrorStream）。
+执行的cmd命令是对rtsp视频流截图，因为并没有参数的输入和得到结果，所以以为没有必要连同管道，虽然cmd窗口能够成功运行，但是运行的过程中会产生警告信息，因此得到的错误流迟迟得不到接受，就进行卡顿。
+1
+2
+三、解决方法
+主程序中执行命令，对错误流进行记录
+1
+ try {
+            Process process4 = Runtime.getRuntime().exec(com);
+            StreamGobbler errorGobbler = new StreamGobbler(process4.getErrorStream(),"ERROR");
+            errorGobbler.start();
+            StreamGobbler outGobbler = new StreamGobbler(process4.getInputStream(), "STDOUT");
+            outGobbler.start();
+            int proc = process4.waitFor();
+//            当前线程等待，如果成功返回0，
+            if(proc==0){
+                System.out.println("成功");
+            }else {
+                System.out.println("失败");
+            }
+            if(process4!=null){
+                process4.destroy();
+            }
+        }catch (IOException | InterruptedException e){
+            e.printStackTrace();
+        }
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+引入StreamGobbler类
+1
+package aiconnect;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+/**
+ * 用于处理Runtime.getRuntime().exec产生的错误流及输出流
+ *
+ */
+public class StreamGobbler extends Thread {
+    InputStream is;
+    String type;
+    OutputStream os;
+
+    public StreamGobbler(InputStream is, String type) {
+        this(is, type, null);
+    }
+
+    StreamGobbler(InputStream is, String type, OutputStream redirect) {
+        this.is = is;
+        this.type = type;
+        this.os = redirect;
+    }
+    public void run() {
+        InputStreamReader isr = null;
+        BufferedReader br = null;
+//        pw用来创建一个文件，并向该文件中写入数据
+        PrintWriter pw = null;
+        try {
+            if (os != null)
+                pw = new PrintWriter(os);
+
+            isr = new InputStreamReader(is);
+            br = new BufferedReader(isr);
+            String line=null;
+            while ( (line = br.readLine()) != null) {
+                if (pw != null)
+                    pw.println(line);
+//                System.out.println(type + ">" + line);
+            }
+
+//            if (pw != null)
+//                pw.flush();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally{
+//            pw.close();
+            try {
+                br.close();
+                isr.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+}
+————————————————
+
+                            版权声明：本文为博主原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接和本声明。
+                        
+原文链接：https://blog.csdn.net/qq_44121622/article/details/126734334
