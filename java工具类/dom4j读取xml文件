@@ -19,7 +19,7 @@
 
         SAXReader saxReader = new SAXReader();
         try {
-            Document read = saxReader.read(fileInputStream);	//用FileInputStream类读取，
+            Document read = saxReader.read(fileInputStream);	//用FileInputStream类读取，避免xml文件占用
             Element rootElement = read.getRootElement();    //build_desc标签
 
             packageNname = rootElement.attributeValue("package_name");
